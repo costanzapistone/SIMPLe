@@ -21,13 +21,13 @@ class Coordination(DualPanda):
         super().__init__()
 
         # Define constants
-        self.SUBJECT = 'g'
+        self.SUBJECT = 'c'
         self.MODEL = 'LR' # Choose the model to use among: 'LDA', 'DT', 'RF', 'LR', 'NB' or 'SVM' 
-        MAT_FILE = f'/home/platonics/Documents/costanza_workspace/src/Robot-Control-by-EEG-with-ML/data/BCICIV_calib_ds1{self.SUBJECT}.mat'
+        self.MAT_FILE = f'/home/platonics/Documents/costanza_workspace/src/Robot-Control-by-EEG-with-ML/data/BCICIV_calib_ds1{self.SUBJECT}.mat'
         self.TRAINED_MODEL_FILE_PATH = f"/home/platonics/Documents/costanza_workspace/src/Robot-Control-by-EEG-with-ML/code/classification/Subject_{self.SUBJECT}_lab/Trained_Models/{self.MODEL}_model.pkl"
         self.W_MATRIX_FILE_PATH = f"/home/platonics/Documents/costanza_workspace/src/Robot-Control-by-EEG-with-ML/code/classification/Subject_{self.SUBJECT}_lab/Trained_Models/CSP_matrix_W.pkl"
         self.CSV_FOLDERPATH = f'/home/platonics/Documents/costanza_workspace/src/Robot-Control-by-EEG-with-ML/results'
-        self.experiment_number = 1
+        self.experiment_number = 10
         self.THRESHOLD = None  # Set the threshold if available, otherwise set to None
 
         # Initialize csv_writer as None
@@ -55,7 +55,7 @@ class Coordination(DualPanda):
             self.execution_time = None  # Or any default value you prefer
 
         # Load the .mat file
-        self.EEG_data = loadmat(MAT_FILE, struct_as_record = True)
+        self.EEG_data = loadmat(self.MAT_FILE, struct_as_record = True)
         self.sfreq = self.EEG_data['nfo']['fs'][0][0][0][0]
         self.EEGdata   = self.EEG_data['cnt'].T 
         self.nchannels, self.nsamples = self.EEGdata.shape
@@ -228,6 +228,7 @@ class Coordination(DualPanda):
         """
         # Define the data to be written into the CSV file
         data = [
+            self.SUBJECT,
             self.experiment_number,
             self.MODEL,
             self.THRESHOLD,
@@ -248,16 +249,13 @@ class Coordination(DualPanda):
             # If the file doesn't exist, write headers to it
             with open(self.csv_file_path, 'w', newline='') as csv_file:
                 csv_writer = csv.writer(csv_file)
-                csv_writer.writerow(['Experiment Number', 'Model', 'Threshold Value', 'Execution Time', 'Left Count', 'Left Good Pred - TN', 'Left Bad Pred - FP', 'Right Count', 'Right Good Pred - TP', 'Right Bad Pred - FN'])
+                csv_writer.writerow(['Subject','Experiment Number', 'Model', 'Threshold Value', 'Execution Time', 'Left Count', 'Left Good Pred - TN', 'Left Bad Pred - FP', 'Right Count', 'Right Good Pred - TP', 'Right Bad Pred - FN'])
         
         # Write data to the CSV file
         with open(self.csv_file_path, 'a', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerow(data)
 
-    def __del__(self):
-        # Close the CSV file when the Coordination object is deleted
-        self.csv_file.close()
         
 #%%
 if __name__ == '__main__':
@@ -297,6 +295,5 @@ if __name__ == '__main__':
     #%%
     BiManualTeaching.syncronize()
     # %%
-    # After finishing the experiment, call the method to store data
     BiManualTeaching.store_experiment_data()
 # %%
