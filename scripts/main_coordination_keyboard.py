@@ -5,7 +5,7 @@ Cognitive Robotics, TU Delft
 This code is part of TERI (TEaching Robots Interactively) project
 """
 #%%
-from  SIMPLe_bimanual.dual_panda import DualPanda
+from SIMPLe_bimanual.dual_panda import DualPanda
 from pynput.keyboard import Listener, Key
 import time
 import rospy
@@ -19,7 +19,7 @@ class Coordination(DualPanda):
 
         self.listener_arrow.start()
 
-        self.look_ahead=30 # this how many steps in the future the robot is going to move after one input on the keyboard
+        self.look_ahead=10 # this how many steps in the future the robot is going to move after one input on the keyboard
     def _on_press_arrow(self, key):
         # This function runs on the background and checks if a keyboard key was pressed
         if key == Key.right:
@@ -28,8 +28,6 @@ class Coordination(DualPanda):
         if key == Key.left:
             self.right = True
             self.index_left=int(self.index_left+self.look_ahead)
-            
-
     def syncronize(self):
         
         self.index_right=int(0)
@@ -80,12 +78,15 @@ if __name__ == '__main__':
     BiManualTeaching.Panda_left.load()  
     #%%
     BiManualTeaching.Panda_right.go_to_start()
+    #%%
     BiManualTeaching.Panda_left.go_to_start()  
     #%%
     BiManualTeaching.Panda_left.home()
+    #%%
     BiManualTeaching.Panda_right.home()
     #%%
     BiManualTeaching.Panda_left.home_gripper()
+    #%%
     BiManualTeaching.Panda_right.home_gripper()
     #%%
     BiManualTeaching.Panda_left.Kinesthetic_Demonstration()
@@ -98,6 +99,7 @@ if __name__ == '__main__':
     BiManualTeaching.Panda_right.home()
     # %%
     BiManualTeaching.Panda_left.save() 
+    #%%
     BiManualTeaching.Panda_right.save()      
 
     #%%

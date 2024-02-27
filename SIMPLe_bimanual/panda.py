@@ -323,3 +323,5 @@ class Panda:
         rospy.sleep(rospy.Duration(secs=5))
 
         self.set_K.update_configuration({f'{str(self.name)}_nullspace_stiffness':0})
+
+# %%
