@@ -28,8 +28,8 @@ class Coordination(DualPanda):
         self.TRAINED_MODEL_FILE_PATH = f"/home/platonics/Documents/costanza_workspace/src/Robot-Control-by-EEG-with-ML/code/classification/Subject_{self.SUBJECT}_lab/Trained_Models/{self.MODEL}_model.pkl"
         self.W_MATRIX_FILE_PATH = f"/home/platonics/Documents/costanza_workspace/src/Robot-Control-by-EEG-with-ML/code/classification/Subject_{self.SUBJECT}_lab/Trained_Models/CSP_matrix_W.pkl"
         self.CSV_FOLDERPATH = f'/home/platonics/Documents/costanza_workspace/src/Robot-Control-by-EEG-with-ML/results'
-        self.experiment_number = 1
-        self.THRESHOLD = None  # Set the threshold if available, otherwise set to None
+        self.experiment_number = 10
+        self.THRESHOLD = 0.2  # Set the threshold if available, otherwise set to None
         self.csv_filename = "experiment_results_threshold.csv"
         
         # Initialize csv_writer as None
@@ -133,7 +133,6 @@ class Coordination(DualPanda):
         if self.start_time is None:
             self.start_time = time.time()  # Record the start time when the first arrow key is pressed
 
-        
         if key == Key.right:
 
             self.key_press_data['right']['count'] += 1            
@@ -144,8 +143,9 @@ class Coordination(DualPanda):
             sample_r = self.test[self.cl2][:, random_index_r]
             y_pred_r = self.classifier.predict(sample_r.reshape(1,-1))
             pred_proba_r = self.classifier.predict_proba(sample_r.reshape(1,-1))
-            
-            if pred_proba_r[0][1] > (0.5 + self.THRESHOLD) | pred_proba_r[0][0] > (0.5 > self.THRESHOLD):
+            print(pred_proba_r)
+            if (pred_proba_r[0][1] > (0.5 + self.THRESHOLD)) or (pred_proba_r[0][0] > (0.5 + self.THRESHOLD)):
+                print(pred_proba_r)
 
                 if y_pred_r == 1:
                     
@@ -181,7 +181,7 @@ class Coordination(DualPanda):
             y_pred_l = self.classifier.predict(sample_l.reshape(1,-1))
             pred_proba_l = self.classifier.predict_proba(sample_l.reshape(1,-1))
 
-            if pred_proba_l[0][1] > (0.5 + self.THRESHOLD) | pred_proba_l[0][0] > (0.5 > self.THRESHOLD):
+            if (pred_proba_l[0][1] > (0.5 + self.THRESHOLD)) or (pred_proba_l[0][0] > (0.5 + self.THRESHOLD)):
 
                 if y_pred_l == 1:
                     print('Predicted Movement: Right')
@@ -198,13 +198,12 @@ class Coordination(DualPanda):
                     self.key_press_data['left']['TN'] += 1
 
             else:
+                
                 print('Predicted Movement: No Movement')
                 # Move the left robot
                 self.right = True
                 # self.index_left=int(self.index_left+self.look_ahead)
                 self.key_press_data['left']['No Action'] += 1
-
-
 
     def syncronize(self):
         
@@ -272,7 +271,7 @@ class Coordination(DualPanda):
             # If the file doesn't exist, write headers to it
             with open(self.csv_file_path, 'w', newline='') as csv_file:
                 csv_writer = csv.writer(csv_file)
-                csv_writer.writerow(['Experiment Number', 'Model', 'Threshold', 'Execution Time', 'Left Count', 'TN', 'FP', 'Right Count', 'TP', 'FN'])
+                csv_writer.writerow(['Experiment Number', 'Model', 'Threshold', 'Execution Time', 'Left Count', 'TN', 'FP', 'Left No Actions', 'Right Count', 'TP', 'FN', 'Right No Actions'])
                 # csv_writer.writerow(['Experiment Number', 'Model', 'Threshold', 'Execution Time', 'Left Count', 'Left Good Pred - TN', 'Left Bad Pred - FP', 'Right Count', 'Right Good Pred - TP', 'Right Bad Pred - FN'])
 
         # Write data to the CSV file
@@ -295,19 +294,25 @@ if __name__ == '__main__':
     #%%
     BiManualTeaching.Panda_right.go_to_start()
     #%%
-    BiManualTeaching.Panda_left.go_to_start()  
+    BiManualTeaching.Panda_left.go_to_start()
+    #%%
+    BiManualTeaching.Panda_left.home_gripper()
+    #%%
+    BiManualTeaching.Panda_right.home_gripper()
+    #%%
+    BiManualTeaching.syncronize()
+    # %%
+    BiManualTeaching.store_experiment_data()
+    #%%
+
+
+
     #%%
     BiManualTeaching.Panda_left.home()
     #%%
     BiManualTeaching.Panda_right.home()
     #%%
-    BiManualTeaching.Panda_left.home_gripper()
-
-    #%%
-    BiManualTeaching.Panda_right.home_gripper()
-    #%%
     BiManualTeaching.Panda_left.Kinesthetic_Demonstration()
-
     # %%
     BiManualTeaching.Panda_left.home()
     #%%

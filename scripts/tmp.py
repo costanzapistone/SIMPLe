@@ -100,3 +100,7 @@ else:
 pred_proba = classifier.predict_proba(sample.reshape(1,-1))
 print(pred_proba)
 # %%
+
+threshold = 0.2
+if pred_proba[0][1] > (0.5 + threshold) | pred_proba[0][0] > (0.5 + threshold):
+    print(pred_proba)
