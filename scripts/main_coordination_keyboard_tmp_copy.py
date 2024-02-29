@@ -22,14 +22,14 @@ class Coordination(DualPanda):
         super().__init__()
 
         # Define constants
-        self.SUBJECT = 'g'
+        self.SUBJECT = 'c'
         self.MODEL = 'LR' # Choose the model to use among: 'LDA', 'DT', 'RF', 'LR', 'NB' or 'SVM' 
         self.MAT_FILE = f'/home/platonics/Documents/costanza_workspace/src/Robot-Control-by-EEG-with-ML/data/BCICIV_calib_ds1{self.SUBJECT}.mat'
         self.TRAINED_MODEL_FILE_PATH = f"/home/platonics/Documents/costanza_workspace/src/Robot-Control-by-EEG-with-ML/code/classification/Subject_{self.SUBJECT}_lab/Trained_Models/{self.MODEL}_model.pkl"
         self.W_MATRIX_FILE_PATH = f"/home/platonics/Documents/costanza_workspace/src/Robot-Control-by-EEG-with-ML/code/classification/Subject_{self.SUBJECT}_lab/Trained_Models/CSP_matrix_W.pkl"
         self.CSV_FOLDERPATH = f'/home/platonics/Documents/costanza_workspace/src/Robot-Control-by-EEG-with-ML/results'
         self.experiment_number = 10
-        self.THRESHOLD = 0.2  # Set the threshold if available, otherwise set to None
+        self.THRESHOLD = 0.1  # Set the threshold if available, otherwise set to None
         self.csv_filename = "experiment_results_threshold.csv"
         
         # Initialize csv_writer as None
